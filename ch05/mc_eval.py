@@ -1,15 +1,25 @@
-import os, sys; sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # for importing the parent dirs
+## P.165 무작위 정책에 따라 행동하는 에이전트
+## RandomAgent class
+
+import os, sys
+
+# To check working directory check before path add
+print()
+
+# for importing the parent dirs
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
 from collections import defaultdict
 import numpy as np
 from common.gridworld import GridWorld
-
 
 class RandomAgent:
     def __init__(self):
         self.gamma = 0.9
         self.action_size = 4
 
-        random_actions = {0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25}
+        ## !!! Random Policy
+        random_actions = {0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25}     
         self.pi = defaultdict(lambda: random_actions)
         self.V = defaultdict(lambda: 0)
         self.cnts = defaultdict(lambda: 0)
@@ -21,6 +31,7 @@ class RandomAgent:
         probs = list(action_probs.values())
         return np.random.choice(actions, p=probs)
 
+    ## save data to replay buffer
     def add(self, state, action, reward):
         data = (state, action, reward)
         self.memory.append(data)
@@ -29,13 +40,17 @@ class RandomAgent:
         self.memory.clear()
 
     def eval(self):
+        ## 이 예제는 에피소딕 시나리오 , 목표 상태의 가치는 0
+        ## 거꾸로 Return 계산하기
+        ## P.162 : G_C = R2 , G_B = R1 + gamma * G_C , G_A = R0 + gamma * G_B
         G = 0
         for data in reversed(self.memory):  # 역방향으로(reserved) 따라가기
             state, action, reward = data
-            G = self.gamma * G + reward
+            G = reward + self.gamma * G
+
+            ## 몬테카를로 방식 , 증분 방식으로 Return G 갱신
             self.cnts[state] += 1
             self.V[state] += (G - self.V[state]) / self.cnts[state]
-
 
 env = GridWorld()
 agent = RandomAgent()
