@@ -24,12 +24,20 @@ class McAgent:
 
         random_actions = {0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25}
         self.pi = defaultdict(lambda: random_actions)
+        '''
+        Note :
+        self.pi[0]
+        {0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25}
+
+        self.pi[4]
+        {0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25}
+        '''
         self.Q = defaultdict(lambda: 0)
         # self.cnts = defaultdict(lambda: 0)
         self.memory = []
 
     def get_action(self, state):
-        action_probs = self.pi[state]
+        action_probs = self.pi[state] ## action_probs = {0 : xx, 1: xx , 2: xx, 3:xx}
         actions = list(action_probs.keys())
         probs = list(action_probs.values())
         return np.random.choice(actions, p=probs)
@@ -45,7 +53,10 @@ class McAgent:
         G = 0
         for data in reversed(self.memory):
             state, action, reward = data
-            G = self.gamma * G + reward
+
+            ## P.171 식5.5 :  Q_n(s,a) = Q_n-1(s,a) + 1/n(G_n - Q_n-1(s,a))
+            ## Note : Q(s,a) = E[G|s,a] = R0 + r*R1 + r^2*R2 + r^3*R3+ ...
+            G = self.gamma * G + reward ## G_n
             key = (state, action)
             # self.cnts[key] += 1
             # self.Q[key] += (G - self.Q[key]) / self.cnts[key]
@@ -56,7 +67,9 @@ class McAgent:
 env = GridWorld()
 agent = McAgent()
 
-episodes = 10000
+# episodes = 10000
+episodes = 100000
+
 for episode in range(episodes):
     state = env.reset()
     agent.reset()

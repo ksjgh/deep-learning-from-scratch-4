@@ -11,7 +11,8 @@ print('참값(E_pi[x]):', e)
 n = 100  # 샘플 개수
 samples = []
 for _ in range(n):
-    s = np.random.choice(x, p=pi)  # pi를 이용한 샘플링
+    # pi를 이용한 샘플링, !!! 실험을 통해서 얻기 때문에 여기서 pi 은 알지 못하는 상태임
+    s = np.random.choice(x, p=pi)  
     samples.append(s)
 
 mean = np.mean(samples)  # 샘플들의 평균
@@ -19,7 +20,9 @@ var = np.var(samples)    # 샘플들의 분산
 print('몬테카를로법: {:.2f} (분산: {:.2f})'.format(np.mean(samples), np.var(samples)))
 
 # =========== 중요도 샘플링으로 계산 ===========
-b = np.array([0.2, 0.2, 0.6])  #b = np.array([1/3, 1/3, 1/3])
+b = np.array([1/3, 1/3, 1/3])  # 첫 번째 실험 : 확률 분포가 서로 매우 다를 때 분산 커짐
+# b = np.array([0.2, 0.2, 0.6]) # 두 번째 개선 : 확률 분포가 유사해지면 분산 줄어듬 (P.167)
+
 samples = []
 for _ in range(n):
     idx = np.arange(len(b))         # b의 인덱스([0, 1, 2])
