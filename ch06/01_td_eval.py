@@ -1,3 +1,7 @@
+## TD evaluation , P.195
+## def eval 이 핵심
+
+
 import os, sys; sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # for importing the parent dirs
 from collections import defaultdict
 import numpy as np
@@ -20,10 +24,12 @@ class TdAgent:
         probs = list(action_probs.values())
         return np.random.choice(actions, p=probs)
 
+    ##############################################################################
     def eval(self, state, reward, next_state, done):
         next_V = 0 if done else self.V[next_state]  # 목표 지점의 가치 함수는 0
         target = reward + self.gamma * next_V
         self.V[state] += (target - self.V[state]) * self.alpha
+    ##############################################################################
 
 
 env = GridWorld()
@@ -37,7 +43,9 @@ for episode in range(episodes):
         action = agent.get_action(state)
         next_state, reward, done = env.step(action)
 
-        agent.eval(state, reward, next_state, done)  # 매번 호출
+        ##############################################################################
+        agent.eval(state, reward, next_state, done)  # 매 스텝마다 V(s) 갱신
+        ##############################################################################
         if done:
             break
         state = next_state

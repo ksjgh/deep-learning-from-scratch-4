@@ -1,5 +1,17 @@
+## SARSA , Q , on-policy update , P.200
+'''
+key points
+Use Q func : SARSA
+memory deque
+on-policy , e-greedy
+Q update per 2 TD step
+Update at last(After reaching goal position)
+'''
+
 import os, sys; sys.path.append(os.path.join(os.path.dirname(__file__), '..'))  # for importing the parent dirs
+###############################################
 from collections import defaultdict, deque
+###############################################
 import numpy as np
 from common.gridworld import GridWorld
 from common.utils import greedy_probs
@@ -14,8 +26,11 @@ class SarsaAgent:
 
         random_actions = {0: 0.25, 1: 0.25, 2: 0.25, 3: 0.25}
         self.pi = defaultdict(lambda: random_actions)
+        ###############################################
         self.Q = defaultdict(lambda: 0)
+        ###############################################
         self.memory = deque(maxlen=2)  # deque 사용
+        ###############################################
 
     def get_action(self, state):
         action_probs = self.pi[state]  # pi에서 선택
@@ -26,8 +41,12 @@ class SarsaAgent:
     def reset(self):
         self.memory.clear()
 
+##############################################################################################
     def update(self, state, action, reward, done):
+        ###############################################
+        ## memory is deque(maxlen=2)
         self.memory.append((state, action, reward, done))
+        ###############################################
         if len(self.memory) < 2:
             return
 
@@ -41,7 +60,7 @@ class SarsaAgent:
         
         # 정책 개선
         self.pi[state] = greedy_probs(self.Q, state, self.epsilon)
-
+##############################################################################################
 
 env = GridWorld()
 agent = SarsaAgent()
@@ -55,12 +74,16 @@ for episode in range(episodes):
         action = agent.get_action(state)
         next_state, reward, done = env.step(action)
 
+        ###############################################
         agent.update(state, action, reward, done)  # 매번 호출
-
+        ###############################################
+        
         if done:
+            ###############################################
             # 목표에 도달했을 때도 호출
             agent.update(next_state, None, None, None)
             break
+            ###############################################
         state = next_state
 
 # [그림 6-7] SARSA로 얻은 결과
