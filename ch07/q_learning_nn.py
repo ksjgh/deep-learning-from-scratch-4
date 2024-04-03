@@ -40,7 +40,7 @@ class QLearningAgent:
         self.optimizer = optimizers.SGD(self.lr)  # 옵티마이저 생성
         self.optimizer.setup(self.qnet)           # 옵티마이저에 신경망 등록
 
-    def get_action(self, state_vec):
+    def get_action(self, state_vec):  ## state_vec : one-hot encode
         if np.random.rand() < self.epsilon:
             return np.random.choice(self.action_size)
         else:
@@ -58,9 +58,11 @@ class QLearningAgent:
 
         # 목표
         target = self.gamma * next_q + reward
+
         # 현재 상태에서의 Q 함수 값(q) 계산
         qs = self.qnet(state)
         q = qs[:, action]
+        
         # 목표(target)와 q의 오차 계산
         loss = F.mean_squared_error(target, q)
 
