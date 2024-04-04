@@ -60,6 +60,8 @@ class DQNAgent:  # 에이전트 클래스
         self.qnet = QNet(self.action_size)         # 원본 신경망
         self.qnet_target = QNet(self.action_size)  # 목표 신경망
         self.optimizer = optimizers.Adam(self.lr)
+        
+        ############################################### Behavior network        
         self.optimizer.setup(self.qnet)            # 옵티마이저에 qnet 등록
 
     def get_action(self, state):
@@ -78,9 +80,12 @@ class DQNAgent:  # 에이전트 클래스
 
         # 미니배치 크기 이상이 쌓이면 미니배치 생성
         state, action, reward, next_state, done = self.replay_buffer.get_batch()
+        
+        ############################################### Behavior network
         qs = self.qnet(state)
         q = qs[np.arange(self.batch_size), action]
 
+        ############################################### Target network
         next_qs = self.qnet_target(next_state)
         next_q = next_qs.max(axis=1)
         next_q.unchain()
@@ -92,6 +97,7 @@ class DQNAgent:  # 에이전트 클래스
         loss.backward()
         self.optimizer.update()
 
+    ##################################### Copy Behavior Network ->Target network
     def sync_qnet(self):  # 두 신경망 동기화
         self.qnet_target = copy.deepcopy(self.qnet)
 
@@ -115,6 +121,7 @@ for episode in range(episodes):
         state = next_state
         total_reward += reward
 
+    ##################################### Sync Behavior Network ->Target network    
     if episode % sync_interval == 0:
         agent.sync_qnet()
 

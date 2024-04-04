@@ -1,3 +1,5 @@
+## Replayer buffer test example
+
 from collections import deque
 import random
 import numpy as np
@@ -28,7 +30,11 @@ class ReplayBuffer:
 
 
 env = gym.make('CartPole-v0', render_mode='human')
+
+###################################################################
+## Create replay buffer
 replay_buffer = ReplayBuffer(buffer_size=10000, batch_size=32)
+###################################################################
 
 for episode in range(10):  # 에피소드 10회 수행
     state = env.reset()[0]

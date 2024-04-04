@@ -1,3 +1,5 @@
+## one episode play , Cart Pole V0
+
 import numpy as np
 import gym
 
@@ -11,4 +13,5 @@ while not done:  # 에피소드가 끝날 때까지 반복
     action = np.random.choice([0, 1])  # 행동 선택(무작위)
     next_state, reward, terminated, truncated, info = env.step(action)
     done = terminated | truncated      # 둘 중 하나만 True면 에피소드 종료
+
 env.close()
