@@ -17,7 +17,9 @@ class Policy(Model):
 
     def forward(self, x):
         x = F.relu(self.l1(x))     # 첫 번째 계층에서는 ReLU 함수 사용
+        #################################################################
         x = F.softmax(self.l2(x))  # 두 번째 계층에서는 소프트맥스 함수 사용
+        #################################################################
         return x
 
 
@@ -25,24 +27,26 @@ class Agent:
     def __init__(self):
         self.gamma = 0.98
         self.lr = 0.0002
-        self.action_size = 2
+        self.action_size = 2  ## Cart_Pole
 
         self.memory = []
         self.pi = Policy(self.action_size)
         self.optimizer = optimizers.Adam(self.lr)
         self.optimizer.setup(self.pi)
-
+    #################################################################
     def get_action(self, state):
         state = state[np.newaxis, :]  # 배치 처리용 축 추가
-        probs = self.pi(state)        # 순전파 수행
-        probs = probs[0]
+        probs = self.pi(state)        # 순전파 수행 , 여기서는 probs = [[0.48, 0.52]] 형태
+        probs = probs[0] ## probs = [0.48, 0.52] 형태
         action = np.random.choice(len(probs), p=probs.data)  # 행동 선택
-        return action, probs[action]  # 선택된 행동과 확률 반환
+        return action, probs[action]  # 선택된 행동과 확률 반환 , 예 : action=1 , probs[1]=0.4
+    #################################################################    
 
     def add(self, reward, prob):
         data = (reward, prob)
         self.memory.append(data)
 
+    #################################################################    
     def update(self):
         self.pi.cleargrads()
 
@@ -56,6 +60,7 @@ class Agent:
         loss.backward()
         self.optimizer.update()
         self.memory = []  # 메모리 초기화
+    #################################################################    
 
 
 episodes = 3000

@@ -43,6 +43,7 @@ class Agent:
         data = (reward, prob)
         self.memory.append(data)
 
+#########################################################################
     def update(self):
         self.pi.cleargrads()
 
@@ -54,6 +55,7 @@ class Agent:
         loss.backward()
         self.optimizer.update()
         self.memory = []
+#########################################################################
 
 
 episodes = 3000

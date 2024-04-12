@@ -93,7 +93,10 @@ for episode in range(episodes):
         next_state, reward, terminated, truncated, info = env.step(action)
         done = terminated | truncated
 
+######################################################################
+        ## 매 단계마다 갱신
         agent.update(state, prob, reward, next_state, done)
+######################################################################
 
         state = next_state
         total_reward += reward
